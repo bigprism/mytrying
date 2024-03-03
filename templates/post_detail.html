@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card mb-4">
+        <div class="card-header">
+          <div class="d-flex justify-content-between">
+            <div>
+              <a href="{% url 'profile' post.author.username %}">{{ post.author.username }}</a>
+            </div>
+            <div>
+              {{ post.created_at|date:"Y-m-d H:i:s" }}
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          {{ post.content }}
+        </div>
+        <div class="card-footer">
+          <div class="d-flex justify-content-between">
+            <div>
+              <a href="{% url 'post_detail' post.pk %}" class="btn btn-primary">View</a>
+              {% if post.author == user %}
+              <a href="{% url 'post_edit' post.pk %}" class="btn btn-warning">Edit</a>
+              <a href="{% url 'post_delete' post.pk %}" class="btn btn-danger">Delete</a>
+              {% endif %}
+            </div>
+            <div>
+              <a href="{% url 'like' post.pk %}" class="btn btn-success">Like</a>
+              {{ post.likes }} likes
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          Comments
+        </div>
+        <ul class="list-group list-group-flush">
+          {% for comment in post.comments.all %}
+          <li class="list-group-item">
+            <div>
+              <a href="{% url 'profile' comment.user.username %}">{{ comment.user.username }}</a>
+            </div>
+            <div>
+              {{ comment.content }}
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        <div class="card-footer">
+          <form action="{% url 'comment' post.pk %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="content">Comment:</label>
+              <textarea class="form-control" id="content" name="content" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          Latest Posts
+        </div>
+        <ul class="list-group list-group-flush">
+          {% for post in latest_posts %}
+          <li class="list-group-item">
+            <a href="{% url 'post_detail' post.pk %}">{{ post.content }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

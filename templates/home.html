@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      {% for post in posts %}
+      <div class="card mb-4">
+        <div class="card-header">
+          <div class="d-flex justify-content-between">
+            <div>
+              <a href="{% url 'profile' post.author.username %}">{{ post.author.username }}</a>
+            </div>
+            <div>
+              {{ post.created_at|date:"Y-m-d H:i:s" }}
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          {{ post.content }}
+        </div>
+        <div class="card-footer">
+          <div class="d-flex justify-content-between">
+            <div>
+              <a href="{% url 'post_detail' post.pk %}" class="btn btn-primary">View</a>
+              {% if post.author == user %}
+              <a href="{% url 'post_edit' post.pk %}" class="btn btn-warning">Edit</a>
+              <a href="{% url 'post_delete' post.pk %}" class="btn btn-danger">Delete</a>
+              {% endif %}
+            </div>
+            <div>
+              <a href="{% url 'like' post.pk %}" class="btn btn-success">Like</a>
+              {{ post.likes }} likes
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          Latest Users
+        </div>
+        <ul class="list-group list-group-flush">
+          {% for user in latest_users %}
+          <li class="list-group-item">
+            <a href="{% url 'profile' user.username %}">{{ user.username }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
